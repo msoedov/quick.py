@@ -67,7 +67,11 @@ class QuickCheck(object):
 
     def check(self, experiment):
         print(experiment.name)
-        max_count = experiment.config['max_count']
+        if experiment.config is default:
+            settings = self.settings
+        else:
+            settings = experiment.config
+        max_count = settings['max_count']
         for x in range(max_count):
             test_case, input = generate(experiment.fn)
             ok = test_case(**input)
