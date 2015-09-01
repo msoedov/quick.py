@@ -1,11 +1,3 @@
-def paralel(state=None):
-    raise NotImplementedError
-
-
-def nasty_strings():
-    pass
-
-
 import sys
 from collections import namedtuple
 from .core import generate
