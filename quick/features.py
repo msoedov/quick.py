@@ -54,9 +54,9 @@ class QuickCheck(object):
             check(case, self.settings)
 
     def run_parallel(self):
-        with concurrent.futures.ProcessPoolExecutor(max_workers=8) as executor:
+        with concurrent.futures.ProcessPoolExecutor() as executor:
             for case in self.experiments.values():
-                executor.submit(check, case, self.settings.copy())
+                executor.submit(check, case, self.settings)
 
 
 def check(experiment, settings):
