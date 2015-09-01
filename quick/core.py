@@ -8,7 +8,6 @@ import types
 import random
 import sys
 
-
 # from .features import cases
 from .basic_types import random_for, generation_width
 from .arbitrary import A
@@ -38,7 +37,8 @@ def generate(annotated_property):
                 nested_type = _type[0]
                 width = source.choose(0, generation_width)
                 call_with[val] = list(
-                    map(lambda pair: pair[0](**pair[1]), [generate(nested_type) for _ in range(width)]))
+                    map(lambda pair: pair[0](**pair[1]),
+                        [generate(nested_type) for _ in range(width)]))
                 continue
             raise NotImplementedError
         elif _type == A:

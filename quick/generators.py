@@ -8,8 +8,10 @@ def maybe_bool(a: A):
 def maybe(*something):
     """
     """
+
     def gn(a: A):
         return a.one_of(None, *something)
+
     return gn
 
 

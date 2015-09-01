@@ -7,23 +7,19 @@ from quick.features import forall, QuickCheck
 from quick.generators import number
 from quick.arbitrary import A
 
-
 qc = QuickCheck()
 
 
 def y_generator(x: bytes):
     return x
 
-
 # @forall('Compostion of annotation')
 # def prop(x: int, y: y_generator):
 #     return True
 
-
 # @forall('Compostion of annotation')
 # def prop(x: int, y: float):
 #     return True
-
 
 # @forall('Default values', max_count=100)
 # def prop(x: int, y: float, z=1):
@@ -40,5 +36,6 @@ def prop(x: [number]):
     s = sorted(x)
     x.sort()
     return s == x
+
 
 qc.run()

@@ -5,10 +5,10 @@ def paralel(state=None):
 def nasty_strings():
     pass
 
+
 import sys
 from collections import namedtuple
 from .core import generate
-
 
 config = {'max_count': 10, 'max_scale': sys.maxsize}
 experiment = namedtuple('QuickCheckTest', 'name fn config')
@@ -20,18 +20,20 @@ def forall(name='', **defaults):
     def wrap(fn):
         def inn(*args, **kwargs):
             return fn(*args, **kwargs)
+
         inn.__annotations__ = fn.__annotations__
         conf = config.copy()
         conf.update(defaults)
         cases[fn] = experiment(name, fn, conf)
         return inn
+
     return wrap
+
 
 default = object()
 
 
 class QuickCheck(object):
-
     def __init__(self, **settings):
         super(QuickCheck, self).__init__()
         self.settings = settings or config
@@ -41,6 +43,7 @@ class QuickCheck(object):
         def decorator(fn):
             def wrapped(*args, **kwargs):
                 return fn(*args, **kwargs)
+
             wrapped.__annotations__ = fn.__annotations__
             config = default
             if defaults:
@@ -48,6 +51,7 @@ class QuickCheck(object):
                 config.update(defaults)
             self.experiments[fn] = experiment(experiment_name, fn, config)
             return wrapped
+
         return decorator
 
     forall = __call__
