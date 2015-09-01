@@ -1,9 +1,10 @@
 import sys
 from collections import namedtuple
 from .core import generate
+import concurrent.futures
 
-config = {'max_count': 10, 'max_scale': sys.maxsize}
-experiment = namedtuple('QuickCheckTest', 'name fn config')
+config = {'max_count': 100, 'max_scale': sys.maxsize}
+experiment = namedtuple('experiment', 'name fn config')
 
 cases = {}
 
@@ -37,17 +38,12 @@ class QuickCheck(object):
     def __call__(self, experiment_name, **defaults):
 
         def decorator(fn):
-
-            def wrapped(*args, **kwargs):
-                return fn(*args, **kwargs)
-
-            wrapped.__annotations__ = fn.__annotations__
             config = default
             if defaults:
                 config = self.settings.copy()
                 config.update(defaults)
             self.experiments[fn] = experiment(experiment_name, fn, config)
-            return wrapped
+            return fn
 
         return decorator
 
@@ -55,20 +51,24 @@ class QuickCheck(object):
 
     def run(self):
         for case in self.experiments.values():
-            self.check(case)
+            check(case, self.settings)
 
-    def check(self, experiment):
-        print(experiment.name)
-        if experiment.config is default:
-            settings = self.settings
-        else:
-            settings = experiment.config
-        max_count = settings['max_count']
-        for x in range(max_count):
-            test_case, input = generate(experiment.fn)
-            ok = test_case(**input)
-            if not ok:
-                print('Fail %r' % values)
-                break
-            print('.', end='')
-        print('')
+    def run_parallel(self):
+        with concurrent.futures.ProcessPoolExecutor(max_workers=8) as executor:
+            for case in self.experiments.values():
+                executor.submit(check, case, self.settings.copy())
+
+
+def check(experiment, settings):
+    print(experiment.name)
+    if experiment.config is not default:
+        settings = experiment.config
+    max_count = settings['max_count']
+    for x in range(max_count):
+        test_case, input = generate(experiment.fn)
+        ok = test_case(**input)
+        if not ok:
+            print('Fail %r' % values)
+            break
+        print('.', end='')
+    print('')

@@ -13,17 +13,20 @@ qc = QuickCheck()
 def y_generator(x: bytes):
     return x
 
-# @forall('Compostion of annotation')
-# def prop(x: int, y: y_generator):
-#     return True
 
-# @forall('Compostion of annotation')
-# def prop(x: int, y: float):
-#     return True
+@qc.forall('Compostion of annotation')
+def prop(x: int, y: y_generator):
+    return True
 
-# @forall('Default values', max_count=100)
-# def prop(x: int, y: float, z=1):
-#     return max(x, y, z) > 1
+
+@qc.forall('Int and float')
+def prop(x: int, y: float):
+    return True
+
+
+@qc.forall('Default values', max_count=100)
+def prop(x: int, z=1):
+    return abs(x) + 1 > z
 
 
 @qc('Numbers', max_count=100)

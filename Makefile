@@ -2,7 +2,7 @@ default: format test
 
 test:
 	@python quick.py
-	@nosetests --with-coverage --cover-package broccoli
+	@nosetests --with-coverage --cover-package quick
 
 clean:
 	@find . -name '*.pyc' -delete
