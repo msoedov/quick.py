@@ -17,7 +17,9 @@ cases = {}
 
 
 def forall(name='', **defaults):
+
     def wrap(fn):
+
         def inn(*args, **kwargs):
             return fn(*args, **kwargs)
 
@@ -34,13 +36,16 @@ default = object()
 
 
 class QuickCheck(object):
+
     def __init__(self, **settings):
         super(QuickCheck, self).__init__()
         self.settings = settings or config
         self.experiments = {}
 
     def __call__(self, experiment_name, **defaults):
+
         def decorator(fn):
+
             def wrapped(*args, **kwargs):
                 return fn(*args, **kwargs)
 
