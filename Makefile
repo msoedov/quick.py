@@ -1,6 +1,7 @@
 default: format test
 
 test:
+	@python quick.py
 	@nosetests --with-coverage --cover-package broccoli
 
 clean:
