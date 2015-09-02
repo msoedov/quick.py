@@ -1,6 +1,4 @@
-"""
-Quick check testing library for python
-"""
+import unittest
 from quick.core import check, quick_check
 from quick.features import forall, QuickCheck
 from quick.generators import number
@@ -40,4 +38,7 @@ def prop(x: [number]):
     return s == x
 
 
-qc.run()
+class TestSpec(unittest.TestCase):
+
+    def test_module(self):
+        qc.run()
