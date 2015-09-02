@@ -1,4 +1,5 @@
 import sys
+import unittest
 from collections import namedtuple
 from .core import generate
 import concurrent.futures
@@ -38,6 +39,19 @@ class QuickCheck(object):
         with concurrent.futures.ProcessPoolExecutor() as executor:
             for case in self.experiments.values():
                 executor.submit(check, case, self.settings)
+
+    def as_testcase(self, prototype=unittest.TestCase):
+
+        class TestMe(unittest.TestCase):
+            pass
+
+        for case in self.experiments.values():
+
+            def testcase(t):
+                t.assertTrue(False)
+
+            setattr(TestMe, case.name, testcase)
+        return TestMe
 
 
 def check(experiment, settings):
