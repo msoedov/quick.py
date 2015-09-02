@@ -15,4 +15,4 @@ def random_for(primitive_type):
         return ''
     elif primitive_type == bytes:
         size = random.randint(0, generation_width)
-        return bytes(os.urandom(size))
+        return bytes(random.randint(size))
