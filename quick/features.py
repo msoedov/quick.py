@@ -63,7 +63,7 @@ def check(experiment, settings):
         test_case, input = generate(experiment.fn)
         ok = test_case(**input)
         if not ok:
-            print('Fail %r' % values)
+            print('Fail %r' % input)
             break
         print('.', end='')
     print('')

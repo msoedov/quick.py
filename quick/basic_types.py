@@ -18,7 +18,11 @@ def random_for(primitive_type):
         return bytes([random.randint(0, 255) for _ in range(size)])
 
 
-def default(type, lo=-max_num, hi=max_num, complex_size=generation_width, min_complexity=0):
+def default(type,
+            lo=-max_num,
+            hi=max_num,
+            complex_size=generation_width,
+            min_complexity=0):
     if type == float:
         return random.uniform(lo, hi)
     elif type == int:

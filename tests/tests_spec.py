@@ -1,5 +1,4 @@
 import unittest
-from quick.core import check, quick_check
 from quick.features import forall, QuickCheck
 from quick.generators import number
 from quick.arbitrary import A
