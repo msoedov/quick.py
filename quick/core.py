@@ -9,7 +9,7 @@ import random
 import sys
 
 # from .features import cases
-from .basic_types import random_for, generation_width
+from .basic_types import random_for, generation_width, default
 from .arbitrary import A
 
 nil = None
@@ -31,7 +31,7 @@ def generate(annotated_property):
             gen, context = generate(_type)
             call_with[val] = gen(**context)
         elif _type.__hash__ and _type in basic_types:
-            call_with[val] = random_for(_type)
+            call_with[val] = default(_type)
         elif isinstance(_type, composable_types):
             if isinstance(_type, list):
                 nested_type = _type[0]

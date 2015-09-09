@@ -20,6 +20,11 @@ def prop(x: int, y: float):
     return True
 
 
+@qc.forall('Radom unicode str')
+def prop(x: str):
+    return True
+
+
 @qc.forall('Default values', max_count=100)
 def prop(x: int, z=1):
     return abs(x) + 1 > z
