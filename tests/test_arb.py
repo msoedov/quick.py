@@ -3,7 +3,7 @@ from quick.features import forall, QuickCheck
 from quick.generators import number
 from quick.arbitrary import A
 
-qc = QuickCheck()
+qc = QuickCheck(max_count=100)
 
 
 def non_emty_list(el: number, ls: [number]):
@@ -14,7 +14,7 @@ def non_emty_list(el: number, ls: [number]):
     return ls
 
 
-@qc.forall('Arbitrary some of')
+@qc.forall('Arbitrary some_of')
 def prop(a: A, x: [number]):
     sub_set = a.some_of(x)
     for el in sub_set:
@@ -23,10 +23,10 @@ def prop(a: A, x: [number]):
     return True
 
 
-@qc.forall('Arbitrary some of should return no empty list')
+@qc.forall('Arbitrary some_of should return non empty list')
 def prop(a: A, x: non_emty_list):
     sub_set = a.some_of(x, empty=False)
-    return sub_set != []
+    return len(sub_set) >= 1
 
 
 @qc.forall('Arbitrary one of')
@@ -35,7 +35,4 @@ def prop(a: A, x: [number]):
     return element in x
 
 
-class TestSpec(unittest.TestCase):
-
-    def test_module(self):
-        qc.run()
+TestSpec = qc.as_testcase()

@@ -13,8 +13,9 @@ class Arbitrary(object):
                 return iterable
             elif iter_len == 0:
                 raise ValueError('Iterable can not be empty')
-            start_from = 1
         take_n = random.randint(start_from, iter_len)
+        if not empty and take_n == start_from:
+            take_n += 1
         return self.shuffle(iterable)[start_from:take_n]
 
     def one_of(self, *options):

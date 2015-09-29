@@ -42,19 +42,31 @@ class QuickCheck(object):
 
     def as_testcase(self, prototype=unittest.TestCase):
 
-        class TestMe(unittest.TestCase):
-            pass
+        class TestProperties(unittest.TestCase):
+            """
+            Automatically generated tests case based on quick check properties
+            """
 
-        for case in self.experiments.values():
+        settings = self.settings
+        for experiment in self.experiments.values():
+            if experiment.config is not default:
+                settings = experiment.config
+            max_count = settings['max_count']
+            for x in range(max_count):
 
-            def testcase(t):
-                t.assertTrue(False)
+                def test_experiment(t):
+                    test_case, input = generate(experiment.fn)
+                    ok = test_case(**input)
+                    t.assertTrue(ok, '`{}` Input: #{}'.format(experiment.name,
+                                                              input))
 
-            setattr(TestMe, case.name, testcase)
-        return TestMe
+                setattr(TestProperties, '{}#{}'.format(experiment.name, x),
+                        test_experiment)
+        return TestProperties
 
 
 def check(experiment, settings):
+    # todo: drop it
     print(experiment.name)
     if experiment.config is not default:
         settings = experiment.config
