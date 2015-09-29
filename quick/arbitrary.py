@@ -6,8 +6,13 @@ class Arbitrary(object):
     values_tree = None
 
     def some_of(self, iterable, empty=True):
-        start_from = 0 if not empty else 1
-        take_n = random.randint(start_from, len(iterable))
+        iter_len = len(iterable)
+        start_from = 0
+        if not empty:
+            if iter_len == 1:
+                return iterable
+            start_from = 1
+        take_n = random.randint(start_from, iter_len)
         return self.shuffle(iterable)[start_from:take_n]
 
     def one_of(self, *options):

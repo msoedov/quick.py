@@ -9,7 +9,7 @@ import random
 import sys
 
 # from .features import cases
-from .basic_types import random_for, generation_width, default
+from .basic_types import generation_width, default
 from .arbitrary import A
 
 nil = None
