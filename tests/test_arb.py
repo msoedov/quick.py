@@ -23,6 +23,12 @@ def prop(a: A, x: [number]):
     return True
 
 
+@qc.forall('For any given list N len(A.some_of(N)) <= len(N)')
+def prop(a: A, x: [number]):
+    sub_set = a.some_of(x)
+    return len(sub_set) <= len(x)
+
+
 @qc.forall('Arbitrary some_of should return non empty list')
 def prop(a: A, x: non_emty_list):
     sub_set = a.some_of(x, empty=False)
@@ -33,6 +39,18 @@ def prop(a: A, x: non_emty_list):
 def prop(a: A, x: [number]):
     element = a.one_of(x)
     return element in x
+
+
+@qc.forall('A.shuffle of any given list should result list of the same size')
+def prop(a: A, x: [number]):
+    shuffled = a.shuffle(x)
+    return len(shuffled) == len(x)
+
+
+@qc.forall('Shuffled singleton list should be the same')
+def prop(a: A, x: number):
+    shuffled = a.shuffle([x])
+    return shuffled == [x]
 
 
 TestSpec = qc.as_testcase()

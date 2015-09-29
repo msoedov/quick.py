@@ -35,11 +35,6 @@ class QuickCheck(object):
         for case in self.experiments.values():
             check(case, self.settings)
 
-    def run_parallel(self):
-        with concurrent.futures.ProcessPoolExecutor() as executor:
-            for case in self.experiments.values():
-                executor.submit(check, case, self.settings)
-
     def as_testcase(self, prototype=unittest.TestCase):
 
         class TestProperties(unittest.TestCase):
