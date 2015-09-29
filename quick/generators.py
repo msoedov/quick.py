@@ -2,20 +2,15 @@ from .arbitrary import A
 
 
 def maybe_bool(a: A):
-    return a.one_of(True, None, False)
+    return maybe(bool)(a)
 
 
-def maybe(*something):
-    """
-    """
+def maybe(t):
 
     def gn(a: A):
-        return a.one_of(None, *something)
+        return a.one_of(None, a.default(t))
+
     return gn
-
-
-def nasty_string(a: A):
-    return 'unknown'
 
 
 def number(a: A):

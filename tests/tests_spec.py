@@ -42,7 +42,4 @@ def prop(x: [number]):
     return s == x
 
 
-class TestSpec(unittest.TestCase):
-
-    def test_module(self):
-        qc.run()
+TestSpec = qc.as_testcase()

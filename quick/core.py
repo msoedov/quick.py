@@ -7,8 +7,6 @@ import os
 import types
 import random
 import sys
-
-# from .features import cases
 from .basic_types import generation_width, default
 from .arbitrary import A
 
@@ -46,21 +44,3 @@ def generate(annotated_property):
         else:
             raise TypeError('Type to complex {}'.format(_type))
     return annotated_property, call_with
-
-
-def quick_check():
-    for case in cases.values():
-        check(case)
-
-
-def check(experiment):
-    print(experiment.name)
-    max_count = experiment.config['max_count']
-    for x in range(max_count):
-        test_case, input = generate(experiment.fn)
-        ok = test_case(**input)
-        if not ok:
-            print('Fail %r' % values)
-            break
-        print('.', end='')
-    print('')
