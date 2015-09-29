@@ -13,12 +13,19 @@ from .arbitrary import A
 nil = None
 numeric_types = [int, float]
 seq_types = [str, bytes]
-composable_types = (list, tuple, set, map, list)
+composable_types = (list, tuple, set, dict)
 basic_types = set(numeric_types + seq_types)
 
 # todo: Decimal, Fraction
 
 source = A()
+
+
+def reflect(val):
+    if isinstance(val, types.FunctionType):
+        fn, kw = generate(val)
+        return fn(**kw)
+    return default(val)
 
 
 def generate(annotated_property):
@@ -37,8 +44,15 @@ def generate(annotated_property):
                 call_with[val] = list(
                     map(lambda pair: pair[0](**pair[1]),
                         [generate(nested_type) for _ in range(width)]))
-                continue
-            raise NotImplementedError
+            elif isinstance(_type, dict):
+                key_type, values_type = [e for e in _type.items()][0]
+                width = source.choose(0, generation_width)
+                call_with[val] = {
+                    reflect(key_type): reflect(values_type)
+                    for _ in range(width)
+                }
+            else:
+                raise NotImplementedError
         elif _type == A:
             call_with[val] = A()
         else:

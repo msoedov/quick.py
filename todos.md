@@ -5,9 +5,9 @@
 [] shrinking
 [] regexp reverter
 [] random
-[] parallel running
+<!-- [] parallel running -->
 [] random for basic types
 [] real word examples
 [] examples for web services
-[] unittests mixin?
-[] color output
+<!-- [] unittests mixin? -->
+<!-- [] color output -->
