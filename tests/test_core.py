@@ -26,3 +26,29 @@ class TestGenerate(TestCase):
         self.assertIs(fn, foo)
 
         self.assertIsInstance(kw['x'][1], str)
+
+    def test_generate_set(self):
+
+        def foo(x: set([int])):
+            return x
+
+        fn, kw = generate(foo)
+        self.assertIsInstance(kw['x'], set)
+        self.assertIs(fn, foo)
+
+    def test_generate_tuple(self):
+
+        def foo(x: (int, float, bool)):
+            return x
+
+        fn, kw = generate(foo)
+        self.assertIsInstance(kw['x'], tuple)
+        self.assertIs(fn, foo)
+
+    def test_unknown(self):
+        unknown = type('Unknown', (object,), {})
+
+        def foo(x: unknown):
+            return x
+        with self.assertRaises(TypeError):
+            generate(foo)

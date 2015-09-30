@@ -41,9 +41,7 @@ def generate(annotated_property):
             if isinstance(_type, list):
                 nested_type = _type[0]
                 width = source.choose(0, generation_width)
-                call_with[val] = list(
-                    map(lambda pair: pair[0](**pair[1]),
-                        [generate(nested_type) for _ in range(width)]))
+                call_with[val] = [reflect(nested_type) for _ in range(width)]
             elif isinstance(_type, dict):
                 key_type, values_type = [e for e in _type.items()][0]
                 width = source.choose(0, generation_width)
@@ -51,6 +49,12 @@ def generate(annotated_property):
                     reflect(key_type): reflect(values_type)
                     for _ in range(width)
                 }
+            elif isinstance(_type, set):
+                val_type = list(_type)[0]
+                width = source.choose(0, generation_width)
+                call_with[val] = {reflect(val_type) for _ in range(width)}
+            elif isinstance(_type, tuple):
+                call_with[val] = tuple(map(reflect, _type))
             else:
                 raise NotImplementedError
         elif _type == A:
