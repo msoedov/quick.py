@@ -13,6 +13,15 @@ class TestGenerate(TestCase):
         self.assertIsInstance(kw['x'], dict)
         self.assertIs(fn, foo)
 
+    def test_generate_map_complex(self):
+
+        def foo(x: {str: [int]}):
+            return x
+
+        fn, kw = generate(foo)
+        self.assertIsInstance(kw['x'], dict)
+        self.assertIs(fn, foo)
+
     def test_generate_map_nested_gen(self):
 
         def int_gen(a: A):

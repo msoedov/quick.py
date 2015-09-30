@@ -25,7 +25,28 @@ def reflect(val):
     if isinstance(val, types.FunctionType):
         fn, kw = generate(val)
         return fn(**kw)
+    elif val in composable_types:
+        return type_switch(val)
     return default(val)
+
+
+def type_switch(t_var):
+    if isinstance(t_var, list):
+        nested_type = t_var[0]
+        width = source.choose(0, generation_width)
+        return [reflect(nested_type) for _ in range(width)]
+    elif isinstance(t_var, dict):
+        key_type, values_type = [e for e in t_var.items()][0]
+        width = source.choose(0, generation_width)
+        return {reflect(key_type): reflect(values_type) for _ in range(width)}
+    elif isinstance(t_var, set):
+        val_type = list(t_var)[0]
+        width = source.choose(0, generation_width)
+        return {reflect(val_type) for _ in range(width)}
+    elif isinstance(t_var, tuple):
+        return tuple(map(reflect, t_var))
+    else:
+        raise NotImplementedError
 
 
 def generate(annotated_property):
@@ -38,25 +59,7 @@ def generate(annotated_property):
         elif _type.__hash__ and _type in basic_types:
             call_with[val] = default(_type)
         elif isinstance(_type, composable_types):
-            if isinstance(_type, list):
-                nested_type = _type[0]
-                width = source.choose(0, generation_width)
-                call_with[val] = [reflect(nested_type) for _ in range(width)]
-            elif isinstance(_type, dict):
-                key_type, values_type = [e for e in _type.items()][0]
-                width = source.choose(0, generation_width)
-                call_with[val] = {
-                    reflect(key_type): reflect(values_type)
-                    for _ in range(width)
-                }
-            elif isinstance(_type, set):
-                val_type = list(_type)[0]
-                width = source.choose(0, generation_width)
-                call_with[val] = {reflect(val_type) for _ in range(width)}
-            elif isinstance(_type, tuple):
-                call_with[val] = tuple(map(reflect, _type))
-            else:
-                raise NotImplementedError
+            call_with[val] = type_switch(_type)
         elif _type == A:
             call_with[val] = A()
         else:
