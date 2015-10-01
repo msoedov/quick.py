@@ -3,6 +3,7 @@ import unittest
 import functools
 from collections import namedtuple
 from .core import generate
+from .shrink import shrink
 
 config = {'max_count': 100, 'max_scale': sys.maxsize}
 experiment = namedtuple('experiment', 'name fn config')
@@ -77,8 +78,14 @@ class QuickCheck(object):
                 def test_experiment(t):
                     test_case, input = generate(experiment.fn)
                     ok = test_case(**input)
-                    t.assertTrue(ok, '`{}` Input: #{}'.format(experiment.name,
-                                                              input))
+                    if not ok:
+                        shrunked, simplified = shrink(test_case, input)
+                        description = '`{}` Input: #{}'.format(experiment.name,
+                                                               input)
+                        if shrunked:
+                            description = '{}\nSimplified to: {}'.format(
+                                description, simplified)
+                        t.assertTrue(ok, description)
 
                 setattr(TestProperties, '{}#{}'.format(experiment.name, x),
                         test_experiment)
