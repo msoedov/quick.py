@@ -1,12 +1,11 @@
-import unittest
-from quick.features import forall, QuickCheck
+from quick.features import QuickCheck
 from quick.generators import number
 from quick.arbitrary import A
 
 qc = QuickCheck(max_count=100)
 
 
-def non_emty_list(el: number, ls: [number]):
+def non_empty_list(el: number, ls: [number]):
     """
     Generator which always returns non empty list
     """
@@ -30,7 +29,7 @@ def prop(a: A, x: [number]):
 
 
 @qc.forall('Arbitrary some_of should return non empty list')
-def prop(a: A, x: non_emty_list):
+def prop(a: A, x: non_empty_list):
     sub_set = a.some_of(x, empty=False)
     return len(sub_set) >= 1
 
