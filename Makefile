@@ -1,7 +1,7 @@
 default: format test
 
 test:
-	@nosetests --with-coverage --cover-package quick
+	@nosetests --with-coverage --cover-package quick --with-doctest
 
 clean:
 	@find . -name '*.pyc' -delete
