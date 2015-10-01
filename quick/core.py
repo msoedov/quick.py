@@ -1,12 +1,7 @@
 """
 Quick check testing library for python
 """
-import six
-import abc
-import os
 import types
-import random
-import sys
 from .basic_types import generation_width, default
 from .arbitrary import A
 

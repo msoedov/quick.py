@@ -2,6 +2,10 @@ from .arbitrary import A
 
 
 def maybe_bool(a: A):
+    """
+    >>> maybe_bool(A()) in [None, True, False]
+    True
+    """
     return maybe(bool)(a)
 
 

@@ -6,9 +6,14 @@ class GiveUp(Exception):
 
 
 def shrink(validator, input):
+    """
+    >>> validator = lambda x: 1 == x[-1]
+    >>> shrink(validator, {'x': [1, 2, 3]})
+    (True, {'x': [1]})
+    """
     for var, value in input.items():
         strategy = strategies_per_type[type(value)]
-        simplified = strategy(input)
+        simplified = strategy(value)
         while not validator(simplified):
             try:
                 simplified = strategy(simplified)
@@ -32,6 +37,6 @@ def strategy_for(t_var):
 def reduce_to_singleton(x):
     """
     >>> reduce_to_singleton([1, 2])
-     [1]
+    [1]
     """
     return x[:-1]

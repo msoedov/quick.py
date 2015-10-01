@@ -3,7 +3,6 @@ import unittest
 import functools
 from collections import namedtuple
 from .core import generate
-import concurrent.futures
 
 config = {'max_count': 100, 'max_scale': sys.maxsize}
 experiment = namedtuple('experiment', 'name fn config')
