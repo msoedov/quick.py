@@ -17,6 +17,7 @@ def shrink(validator, input):
     >>> shrink(validator, {'x': None})
     (False, {'x': None})
     """
+    simplified_input = input.copy()
     for var, value in input.items():
         strategy = strategies_per_type.get(type(value))
         if not strategy:
@@ -27,9 +28,9 @@ def shrink(validator, input):
                 simplified = strategy(simplified)
             except GiveUp:
                 break
-        input[var] = simplified
-        return True, input
-    return False, input
+        simplified_input[var] = simplified
+        return True, simplified_input
+    return False, simplified_input
 
 
 def strategy_for(t_var):
@@ -47,4 +48,6 @@ def reduce_to_singleton(x):
     >>> reduce_to_singleton([1, 2])
     [1]
     """
+    if not x:
+        raise GiveUp('Singleton list')
     return x[:-1]

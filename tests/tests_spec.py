@@ -40,4 +40,9 @@ def prop(x: [number]):
     return s == x
 
 
+@qc.forall('Test simplification', max_count=10)
+def prop(x: [int]):
+    return len(x) == 3
+
+
 TestSpec = qc.as_testcase()

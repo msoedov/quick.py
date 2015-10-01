@@ -10,6 +10,8 @@ experiment = namedtuple('experiment', 'name fn config')
 
 default = object()
 
+debug = print
+
 
 class QuickCheck(object):
 
@@ -25,14 +27,19 @@ class QuickCheck(object):
             if defaults:
                 config = self.settings.copy()
                 config.update(defaults)
-            self.experiments[fn] = experiment(experiment_name, fn, config)
+            debug('Register {} to {}'.format(experiment_name, fn))
+            self.experiments[experiment_name] = experiment(experiment_name, fn,
+                                                           config)
             return fn
 
         return decorator
 
     forall = __call__
 
-    def as_testcase(self, prototype=unittest.TestCase, skip_on_failure=True):
+    def as_testcase(self,
+                    prototype=unittest.TestCase,
+                    skip_on_failure=True,
+                    simplification=False):
         """
         :param prototype: class of test case
         :param skip_on_failure: boolean flag to skip all test group on first failure
@@ -72,6 +79,8 @@ class QuickCheck(object):
             max_count = settings['max_count']
 
             skip_group = skip_if()
+            # better testing
+            debug('Generating {} to {}'.format(experiment.name, experiment.fn))
             for x in range(max_count):
 
                 @skip_group
@@ -79,7 +88,10 @@ class QuickCheck(object):
                     test_case, input = generate(experiment.fn)
                     ok = test_case(**input)
                     if not ok:
-                        shrunked, simplified = shrink(test_case, input)
+                        if simplification:
+                            shrunked, simplified = shrink(test_case, input)
+                        else:
+                            shrunked = False
                         description = '`{}` Input: #{}'.format(experiment.name,
                                                                input)
                         if shrunked:
