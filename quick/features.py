@@ -1,6 +1,7 @@
 import sys
 import unittest
 import functools
+from copy import deepcopy
 from collections import namedtuple
 from .core import generate
 from .shrink import shrink
@@ -11,6 +12,26 @@ experiment = namedtuple('experiment', 'name fn config')
 default = object()
 
 debug = print
+
+
+def code_gen(experiment, x, skip_group, simplification=False):
+
+    @skip_group
+    def test_experiment(t):
+        test_case, input = generate(experiment.fn)
+        ok = test_case(**input)
+        if not ok:
+            if simplification:
+                shrunked, simplified = shrink(test_case, input)
+            else:
+                shrunked = False
+            description = '`{}` Input: #{}'.format(experiment.name, input)
+            if shrunked:
+                description = '{}\nSimplified to: {}'.format(
+                    description, simplified)
+            t.assertTrue(ok, description)
+
+    return test_experiment
 
 
 class QuickCheck(object):
@@ -25,7 +46,7 @@ class QuickCheck(object):
         def decorator(fn):
             config = default
             if defaults:
-                config = self.settings.copy()
+                config = deepcopy(self.settings)
                 config.update(defaults)
             debug('Register {} to {}'.format(experiment_name, fn))
             self.experiments[experiment_name] = experiment(experiment_name, fn,
@@ -39,12 +60,13 @@ class QuickCheck(object):
     def as_testcase(self,
                     prototype=unittest.TestCase,
                     skip_on_failure=True,
-                    simplification=False):
+                    simplification=True):
         """
         :param prototype: class of test case
         :param skip_on_failure: boolean flag to skip all test group on first failure
         :return: test case class
         """
+        debug('_' * 50)
 
         class TestProperties(prototype):
             """
@@ -79,26 +101,11 @@ class QuickCheck(object):
             max_count = settings['max_count']
 
             skip_group = skip_if()
-            # better testing
-            debug('Generating {} to {}'.format(experiment.name, experiment.fn))
+            debug('Generating {} tests for [{}]'.format(max_count,
+                                                        experiment.name))
             for x in range(max_count):
-
-                @skip_group
-                def test_experiment(t):
-                    test_case, input = generate(experiment.fn)
-                    ok = test_case(**input)
-                    if not ok:
-                        if simplification:
-                            shrunked, simplified = shrink(test_case, input)
-                        else:
-                            shrunked = False
-                        description = '`{}` Input: #{}'.format(experiment.name,
-                                                               input)
-                        if shrunked:
-                            description = '{}\nSimplified to: {}'.format(
-                                description, simplified)
-                        t.assertTrue(ok, description)
-
+                test_experiment = code_gen(experiment, x, skip_group,
+                                           simplification)
                 setattr(TestProperties, '{}#{}'.format(experiment.name, x),
                         test_experiment)
         return TestProperties
