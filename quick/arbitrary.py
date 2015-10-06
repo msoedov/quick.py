@@ -19,6 +19,12 @@ class Arbitrary(object):
         return self.shuffle(iterable)[start_from:take_n]
 
     def one_of(self, *options):
+        """
+        >>> A().one_of(1)
+        1
+        >>> A().one_of(1, 2) in [1, 2]
+        True
+        """
         width = len(options)
         if width == 0:
             raise ValueError('Not enought options')

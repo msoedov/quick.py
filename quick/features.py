@@ -73,6 +73,11 @@ class QuickCheck(object):
             Automatically generated tests case based on quick check properties
             """
 
+            @classmethod
+            def should_fail(cls):
+                cls.__unittest_expecting_failure__ = True
+                return cls
+
         def skip_if():
 
             skip = False

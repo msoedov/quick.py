@@ -36,7 +36,7 @@ def prop(a: A, x: non_empty_list):
 
 @qc.forall('Arbitrary one of')
 def prop(a: A, x: [number]):
-    element = a.one_of(x)
+    element = a.one_of(*x)
     return element in x
 
 
