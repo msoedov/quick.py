@@ -1,21 +1,7 @@
 # quick.py
 
-quick.py is property testing liblary for python inspired by the Haskell library QuickCheck
+quick.py is property-based testing library for Python inspired by the Haskell library QuickCheck. The core idea of QuickCheck is that instead of enumerating expected input and output for unit tests, you write properties about your function that should hold true for all inputs. This lets you write concise, powerful tests.
 
-
-What is property testing and what is QuickCheck?
---------------------------------------------------
-
-```quote
-QuickCheck is a tool for testing Haskell programs automatically.
-The programmer provides a specification of the program, in the
-form of properties which functions should satisfy,
-and QuickCheck then tests that the properties hold in a large number
-of randomly generated cases. Specifications are expressed in Haskell,
-using combinators defined in the QuickCheck library.
-QuickCheck provides combinators to define properties,
-observe the distribution of test data, and define test data generators.
-```
 
 Examples
 -------
@@ -95,7 +81,47 @@ Features
 --------
 - Integration with unittests liblary
 - Custom generators
-- Simpification of failure input (in progres)
+- Simplification/Shrinking of failure input (in progress)
+
+Controlled Randomness
+---------------------
+
+```python
+
+def working_time(a: A):
+    day = a.choose_one('Monday', 'Tuesday', 'Wednesday', 'Thursday')
+    hour = a.choose(8, 17)
+    return {'day': day, 'hour': hour}
+
+```
+
+Custom object generators
+-----------------
+
+
+```python
+class User(object):
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+
+def user_gen(name: str, a: A):
+    age = a.choose(18, 100)
+    return User(name, age)
+
+
+forall('Valid users')
+def prop(user: user_gen):
+    return ...
+```
+
+Shrinking
+---------
+
+TBD
+
 
 
 
@@ -110,3 +136,4 @@ Getting Help
 For **feature requests** and **bug reports** [submit an issue
 ](https://github.com/msoedov/quick/issues) to the GitHub issue tracker for
 quick.py.
+

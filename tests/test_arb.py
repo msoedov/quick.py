@@ -5,6 +5,9 @@ from quick.arbitrary import A
 qc = QuickCheck(max_count=100)
 
 
+
+
+
 def non_empty_list(el: number, ls: [number]):
     """
     Generator which always returns non empty list
@@ -35,7 +38,7 @@ def prop(a: A, x: non_empty_list):
 
 
 @qc.forall('Arbitrary one of')
-def prop(a: A, x: [number]):
+def prop(a: A, x: non_empty_list):
     element = a.one_of(*x)
     return element in x
 
