@@ -14,21 +14,29 @@ default = object()
 debug = print
 
 
+def verify(prop: experiment, simplification=False):
+    test_case, kwargs = generate(prop.fn)
+    ok = test_case(**kwargs)
+    if ok:
+        return True, kwargs, None, None
+    if simplification:
+        shrunked, simplified_to = shrink(test_case, kwargs)
+    else:
+        shrunked = False
+        simplified_to = kwargs
+    return False, kwargs, shrunked, simplified_to
+
+
 def code_gen(experiment, x, skip_group, simplification=False):
 
     @skip_group
     def test_experiment(t):
-        test_case, input = generate(experiment.fn)
-        ok = test_case(**input)
+        ok, kwargs, shrunked, simplified_to = verify(experiment, simplification)
         if not ok:
-            if simplification:
-                shrunked, simplified = shrink(test_case, input)
-            else:
-                shrunked = False
-            description = '`{}` Input: #{}'.format(experiment.name, input)
+            description = '`{}` Input: #{}'.format(experiment.name, kwargs)
             if shrunked:
                 description = '{}\nSimplified to: {}'.format(
-                    description, simplified)
+                    description, simplified_to)
             t.assertTrue(ok, description)
 
     return test_experiment
@@ -100,6 +108,7 @@ class QuickCheck(object):
             return wrap
 
         settings = self.settings
+        properties = []
         for experiment in self.experiments.values():
             if experiment.config is not default:
                 settings = experiment.config
@@ -113,7 +122,14 @@ class QuickCheck(object):
                                            simplification)
                 setattr(TestProperties, '{}#{}'.format(experiment.name, x),
                         test_experiment)
+                properties.append(test_experiment)
+        TestProperties.properties = properties
         return TestProperties
+
+    def verify(self):
+        test_cls = self.as_testcase()
+        test = test_cls()
+        return [prop(test) for prop in test.properties]
 
 
 forall = QuickCheck()

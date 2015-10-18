@@ -22,8 +22,7 @@ class TestGen(unittest.TestCase):
 
         self.assertEqual(len(self.qc.experiments), 2)
 
-        for exp in self.qc.experiments.values():
-            exp.fn(0)
+        self.qc.verify()
 
         self.assertEqual(matrix, {'first': True, 'second': True})
 

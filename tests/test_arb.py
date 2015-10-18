@@ -5,9 +5,6 @@ from quick.arbitrary import A
 qc = QuickCheck(max_count=100)
 
 
-
-
-
 def non_empty_list(el: number, ls: [number]):
     """
     Generator which always returns non empty list

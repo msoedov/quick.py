@@ -3,6 +3,11 @@ default: format test
 test:
 	@nosetests --with-coverage --cover-package quick --with-doctest --rednose --nocapture
 
+
+qc:
+	@nosetests --rednose --with-watch
+
+
 clean:
 	@find . -name '*.pyc' -delete
 	@find . -name '__pycache__' -type d -exec rm -fr {} \;

@@ -45,6 +45,10 @@ def type_switch(t_var):
 
 
 def generate(annotated_property):
+    if not hasattr(
+            annotated_property,
+            '__annotations__') or not annotated_property.__annotations__:
+        raise AssertionError('{} no annotation?'.format(annotated_property))
     annotations = annotated_property.__annotations__
     call_with = {}
     for val, _type in annotations.items():
