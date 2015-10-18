@@ -1,5 +1,6 @@
 import unittest
 from quick.features import QuickCheck, verify
+from quick.generators import positive_num
 
 
 class TestGen(unittest.TestCase):
@@ -8,10 +9,13 @@ class TestGen(unittest.TestCase):
         self.qc = QuickCheck()
 
     def test_shrink_int(self):
+        """
+        It should shrink value from 10 to 20
+        """
 
-        @self.qc.forall('Sample property')
-        def prop(x: int):
-            return abs(x) < 10
+        @self.qc.forall('Sample property that generally invalid')
+        def prop(x: positive_num):
+            return x < 10
 
         experiments = list(self.qc.experiments.values())
 
@@ -24,13 +28,13 @@ class TestGen(unittest.TestCase):
 
         self.assertEqual(ok, False)
 
-        self.assertEqual(simplified_to['x'], 10)
+        self.assertIn(simplified_to['x'], range(10, 20))
 
     def test_shrink_int_v2(self):
 
-        @self.qc.forall('Sample property')
-        def prop(x: int):
-            return 100 < abs(x) < 200
+        @self.qc.forall('Sample property that generally invalid')
+        def prop(x: positive_num):
+            return 100 < x < 200
 
         experiments = list(self.qc.experiments.values())
 
@@ -43,7 +47,7 @@ class TestGen(unittest.TestCase):
 
         self.assertEqual(ok, False)
 
-        self.assertEqual(simplified_to['x'], 10)
+        self.assertEqual(simplified_to['x'], 0)
 
 
 if __name__ == '__main__':

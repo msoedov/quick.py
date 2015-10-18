@@ -21,3 +21,7 @@ def number(a: A):
     kind = a.one_of(int, float)
     num = a.default(kind)
     return num
+
+
+def positive_num(x: int):
+    return abs(x)
