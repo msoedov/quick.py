@@ -92,8 +92,53 @@ class TestGen(unittest.TestCase):
         args = verify(sample_experiment, simplification=True)
         ok, kwargs, shrunked, simplified_to = args
         self.assertEqual(ok, False)
-
+        self.assertEqual(shrunked, True)
         self.assertEqual(simplified_to['x'], [None, 1, 1,])
+
+    def test_shrink_dict(self):
+        """
+        It should shrink dict
+        """
+
+        @self.qc.forall('Sample property that generally invalid')
+        def prop(x: {str: positive_num}):
+            x['a'] = 1
+            return len(x) == 2
+
+        experiments = list(self.qc.experiments.values())
+
+        self.assertEqual(len(experiments), 1)
+
+        sample_experiment = experiments[0]
+
+        args = verify(sample_experiment, simplification=True)
+        ok, kwargs, shrunked, simplified_to = args
+
+        self.assertEqual(ok, False)
+        self.assertEqual(shrunked, True)
+        self.assertEqual(simplified_to['x'], {'a': 1})
+
+    def test_shrink_object(self):
+        """
+        It should shrink composition of generators
+        """
+        @self.qc.forall('Sample property that generally invalid')
+        def prop(x: {str: positive_num}):
+            x['a'] = 1
+            return len(x) == 2
+
+        experiments = list(self.qc.experiments.values())
+
+        self.assertEqual(len(experiments), 1)
+
+        sample_experiment = experiments[0]
+
+        args = verify(sample_experiment, simplification=True)
+        ok, kwargs, shrunked, simplified_to = args
+
+        self.assertEqual(ok, False)
+        self.assertEqual(shrunked, True)
+        self.assertEqual(simplified_to['x'], {'a': 1})
 
 
 if __name__ == '__main__':

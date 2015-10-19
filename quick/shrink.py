@@ -67,7 +67,7 @@ def strategy_for(t_var):
 
 
 @strategy_for(list)
-def reduce_to_singleton(val):
+def all_list_for(val):
     """
     >>> reduce_to_singleton([1, 2])
     [1]
@@ -82,12 +82,10 @@ def reduce_to_singleton(val):
 @strategy_for(dict)
 def all_dicts_form(val):
     """
-    todo:
     """
-    length = len(val)
-    for size in range(1, length + 1):
-        for start in range(0, (length - size) + 1):
-            yield val[start:start + size]
+    key_lists = all_list_for(list(val.keys()))
+    for key_set in key_lists:
+        yield {k: val[k] for k in key_set}
 
 
 @strategy_for(int)
@@ -100,6 +98,14 @@ def reduce_int(val):
     """
     for num in range(0, abs(val)):
         yield num
+
+
+@strategy_for(str)
+def all_str_for(val):
+    chars = val.split()
+    sub_strs = all_list_for(chars)
+    for sub_str in sub_strs:
+        return ''.join(sub_strs)
 
 
 @strategy_for(bool)
