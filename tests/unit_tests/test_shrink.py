@@ -47,7 +47,53 @@ class TestGen(unittest.TestCase):
 
         self.assertEqual(ok, False)
 
-        self.assertEqual(simplified_to['x'], 0)
+        self.assertEqual(simplified_to['x'], 100)
+
+    def test_shrink_list(self):
+        """
+        It should shrink list
+        """
+
+        @self.qc.forall('Sample property that generally invalid')
+        def prop(x: [positive_num]):
+            return len(x) <= 4
+
+        experiments = list(self.qc.experiments.values())
+
+        self.assertEqual(len(experiments), 1)
+
+        sample_experiment = experiments[0]
+
+        args = verify(sample_experiment, simplification=True)
+        ok, kwargs, shrunked, simplified_to = args
+
+        self.assertEqual(ok, False)
+
+        self.assertIn(len(simplified_to['x']), range(5, 10))
+
+    def test_shrink_list_middle(self):
+        """
+        It should shrink list
+        """
+
+        def bit_seq(x: [bool], y: [bool]):
+            return x + [1, 1, 1] + y
+
+        @self.qc.forall('Sample property that generally invalid')
+        def prop(x: bit_seq):
+            return len(x) > 2 and all(map(lambda a: a == 1, x))
+
+        experiments = list(self.qc.experiments.values())
+
+        self.assertEqual(len(experiments), 1)
+
+        sample_experiment = experiments[0]
+
+        args = verify(sample_experiment, simplification=True)
+        ok, kwargs, shrunked, simplified_to = args
+        self.assertEqual(ok, False)
+
+        self.assertEqual(simplified_to['x'], [None, 1, 1,])
 
 
 if __name__ == '__main__':

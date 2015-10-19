@@ -1,3 +1,5 @@
+import itertools
+
 strategies_per_type = {}
 
 max_attempts = 1000
@@ -9,11 +11,11 @@ class ReducerState(object):
     def __init__(self):
         super(ReducerState, self).__init__()
         self.last = None
-        self.left = None
-        self.right = None
+        self.history = []
 
     def change(self, val):
         self.last = val
+        self.history.append(val)
 
 
 class GiveUp(Exception):
@@ -37,26 +39,18 @@ def shrink(validator, input):
         strategy = strategies_per_type.get(type(value))
         if not strategy:
             continue
-        simplified = strategy(value)
-        successes = 0
-        ok = False
+        simplified_vals = strategy(value)
         last_fail = None
-        for _ in range(max_attempts):
-            simplified_input[var] = simplified
+        seen_ok = False
+        for val in itertools.islice(simplified_vals, 0, max_attempts):
+            simplified_input[var] = val
             ok = validator(**simplified_input)
-            if ok:
-                successes += 1
-                if successes > 3:
+            if not ok:
+                if last_fail is not None and seen_ok:
                     break
+                last_fail = val
             else:
-                last_fail = simplified
-            try:
-                simplified = strategy(simplified, ok)
-            except GiveUp:
-                break
-            except Exception:
-                # todo?
-                break
+                seen_ok = True
         simplified_input[var] = last_fail
 
         return True, simplified_input
@@ -66,40 +60,48 @@ def shrink(validator, input):
 def strategy_for(t_var):
 
     def wrap(fn):
-        ctx = ReducerState()
-
-        def wrap(*args, **kw):
-            val = fn(ctx, *args, **kw)
-            ctx.change(val)
-            return val
-
-        strategies_per_type[t_var] = wrap
-        return wrap
+        strategies_per_type[t_var] = fn
+        return fn
 
     return wrap
 
 
 @strategy_for(list)
-def reduce_to_singleton(ctx: ReducerState, x, backtrack=False):
+def reduce_to_singleton(val):
     """
     >>> reduce_to_singleton([1, 2])
     [1]
     """
-    if not x:
-        raise GiveUp('Singleton list')
-    return x[:-1]
+
+    length = len(val)
+    for size in range(1, length + 1):
+        for start in range(0, (length - size) + 1):
+            yield val[start:start + size]
+
+
+@strategy_for(dict)
+def all_dicts_form(val):
+    """
+    todo:
+    """
+    length = len(val)
+    for size in range(1, length + 1):
+        for start in range(0, (length - size) + 1):
+            yield val[start:start + size]
 
 
 @strategy_for(int)
-def reduce_int(ctx: ReducerState, val, backtrack=False):
+def reduce_int(val):
     """
     >>> reduce_by_one(2)
     1
     >>> reduce_by_one(-2)
     -1
     """
-    if val == 0 or val == 1:
-        raise GiveUp('')
-    if backtrack:
-        return (ctx.last - val) // 2
-    return val // 2
+    for num in range(0, abs(val)):
+        yield num
+
+
+@strategy_for(bool)
+def reduce_bool(val):
+    yield not val
