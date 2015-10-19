@@ -1,6 +1,4 @@
-import unittest
 from quick.features import QuickCheck
-from quick.generators import number
 
 qc = QuickCheck()
 
