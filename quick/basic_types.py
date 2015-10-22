@@ -2,7 +2,8 @@ import sys
 import random
 
 max_num = sys.maxsize
-generation_width = 200
+max_num = 1000
+generation_width = 20
 
 
 def default(type,

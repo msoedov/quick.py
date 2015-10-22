@@ -47,7 +47,7 @@ class TestGen(unittest.TestCase):
 
         self.assertEqual(ok, False)
 
-        self.assertEqual(simplified_to['x'], 100)
+        self.assertEqual(simplified_to, {'x': 0})
 
     def test_shrink_list(self):
         """
@@ -93,15 +93,21 @@ class TestGen(unittest.TestCase):
         ok, kwargs, shrunked, simplified_to = args
         self.assertEqual(ok, False)
         self.assertEqual(shrunked, True)
-        self.assertEqual(simplified_to['x'], [None, 1, 1,])
+        self.assertEqual(simplified_to['x'], [None, 1, 1, 1, None])
 
     def test_shrink_dict(self):
         """
         It should shrink dict
         """
 
+        def default(x):
+            return x
+
+        def key_str(x: default(str)):
+            return x[:5]
+
         @self.qc.forall('Sample property that generally invalid')
-        def prop(x: {str: positive_num}):
+        def prop(x: {key_str: positive_num}):
             x['a'] = 1
             return len(x) == 2
 
@@ -113,19 +119,24 @@ class TestGen(unittest.TestCase):
 
         args = verify(sample_experiment, simplification=True)
         ok, kwargs, shrunked, simplified_to = args
-
         self.assertEqual(ok, False)
         self.assertEqual(shrunked, True)
-        self.assertEqual(simplified_to['x'], {'a': 1})
+        self.assertEqual(len(simplified_to['x']), 2, simplified_to)
 
     def test_shrink_object(self):
         """
         It should shrink composition of generators
         """
+
+        def email(name: str, host: str, domain: str):
+            return '{}@{}.{}'.format(name, host, domain)
+
+        def user(username: str, mail: email):
+            return dict(id=1, username=username[:7], mail=mail)
+
         @self.qc.forall('Sample property that generally invalid')
-        def prop(x: {str: positive_num}):
-            x['a'] = 1
-            return len(x) == 2
+        def prop(u: user):
+            return len(u['mail']) < 5
 
         experiments = list(self.qc.experiments.values())
 
@@ -138,7 +149,6 @@ class TestGen(unittest.TestCase):
 
         self.assertEqual(ok, False)
         self.assertEqual(shrunked, True)
-        self.assertEqual(simplified_to['x'], {'a': 1})
 
 
 if __name__ == '__main__':

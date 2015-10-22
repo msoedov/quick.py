@@ -3,7 +3,7 @@ import unittest
 import functools
 from copy import deepcopy
 from collections import namedtuple
-from .core import generate
+from .core import generate, flatten, Schema
 from .shrink import shrink
 
 config = {'max_count': 100, 'max_scale': sys.maxsize}
@@ -15,12 +15,13 @@ debug = print
 
 
 def verify(prop: experiment, simplification=False):
-    test_case, kwargs = generate(prop.fn)
+    test_case, schema = generate(prop.fn)
+    kwargs = flatten(schema)
     ok = test_case(**kwargs)
     if ok:
         return True, kwargs, None, None
     if simplification:
-        shrunked, simplified_to = shrink(test_case, kwargs)
+        shrunked, simplified_to = shrink(test_case, schema)
     else:
         shrunked = False
         simplified_to = kwargs
@@ -37,8 +38,11 @@ def code_gen(experiment, x, skip_group, simplification=False):
             if shrunked:
                 description = '{}\nSimplified to: {}'.format(
                     description, simplified_to)
+            else:
+                description = '{}\n Failed to simplify'.format(description)
             t.assertTrue(ok, description)
 
+    test_experiment.__doc__ = experiment.name
     return test_experiment
 
 
