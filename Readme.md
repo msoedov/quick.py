@@ -79,7 +79,7 @@ OK
 
 Features
 --------
-- Integration with unittests liblary
+- Integration with unittests library
 - Custom generators
 - Simplification/Shrinking of failure input (in progress)
 
