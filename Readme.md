@@ -1,5 +1,7 @@
 # quick.py
 
+[![Join the chat at https://gitter.im/msoedov/quick.py](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/msoedov/quick.py?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 quick.py is property-based testing library for Python inspired by the Haskell library QuickCheck. The core idea of QuickCheck is that instead of enumerating expected input and output for unit tests, you write properties about your function that should hold true for all inputs. This lets you write concise, powerful tests.
 
 
