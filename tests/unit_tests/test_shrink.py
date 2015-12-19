@@ -1,12 +1,25 @@
 import unittest
 from quick.features import QuickCheck, verify
-from quick.generators import positive_num
+from quick.generators import positive_num, A
+
+
+def list_of(t: type, n):
+    def seq(a: A):
+        return a.default([t])
+    return seq
 
 
 class TestGen(unittest.TestCase):
 
     def setUp(self):
         self.qc = QuickCheck()
+
+    def assertLenUpTo(self, seq, limit, msg=None):
+
+        self.assertLessEqual(len(seq), limit, msg=msg)
+
+    def assertInRange(self, val, low, hi):
+        assert low <= val <= hi
 
     def test_shrink_int(self):
         """
@@ -28,13 +41,14 @@ class TestGen(unittest.TestCase):
 
         self.assertEqual(ok, False)
 
-        self.assertIn(simplified_to['x'], range(10, 20))
+        x = simplified_to['x']
+        self.assertInRange(x, 10, 20)
 
     def test_shrink_int_v2(self):
 
         @self.qc.forall('Sample property that generally invalid')
         def prop(x: positive_num):
-            return 100 < x < 200
+            return 50 < x < 200
 
         experiments = list(self.qc.experiments.values())
 
@@ -47,7 +61,8 @@ class TestGen(unittest.TestCase):
 
         self.assertEqual(ok, False)
 
-        self.assertEqual(simplified_to, {'x': 0})
+        x = simplified_to['x']
+        self.assertInRange(x, 0, 100)
 
     def test_shrink_list(self):
         """
@@ -55,7 +70,8 @@ class TestGen(unittest.TestCase):
         """
 
         @self.qc.forall('Sample property that generally invalid')
-        def prop(x: [positive_num]):
+        def prop(x: list_of(positive_num, 10)):
+            print(x)
             return len(x) <= 4
 
         experiments = list(self.qc.experiments.values())
@@ -69,7 +85,8 @@ class TestGen(unittest.TestCase):
 
         self.assertEqual(ok, False)
 
-        self.assertIn(len(simplified_to['x']), range(5, 10))
+        x = simplified_to['x']
+        self.assertLenUpTo(x, 5)
 
     def test_shrink_list_middle(self):
         """
@@ -93,7 +110,10 @@ class TestGen(unittest.TestCase):
         ok, kwargs, shrunked, simplified_to = args
         self.assertEqual(ok, False)
         self.assertEqual(shrunked, True)
-        self.assertEqual(simplified_to['x'], [None, 1, 1, 1, None])
+
+        x = simplified_to['x']
+        self.assertLenUpTo(x, 5)
+        self.assertIn(1, x)
 
     def test_shrink_dict(self):
         """
