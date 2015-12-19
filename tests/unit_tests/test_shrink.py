@@ -4,9 +4,24 @@ from quick.generators import positive_num, A
 
 
 def list_of(t: type, n):
-    def seq(a: A):
-        return a.default([t])
+    def seq(lst: [t]):
+        return lst[:n]
     return seq
+
+
+def assert_simpler(before, after):
+    if before == after:
+        return
+    if not after:
+        return
+    for k, v in before.items():
+        if k not in after:
+            continue
+        if isinstance(v, dict):
+            assert_simpler(v, after[k])
+            continue
+        if v < after[k]:
+            raise AssertionError('{} < {}'.format(before, after))
 
 
 class TestGen(unittest.TestCase):
@@ -38,11 +53,11 @@ class TestGen(unittest.TestCase):
 
         args = verify(sample_experiment, simplification=True)
         ok, kwargs, shrunked, simplified_to = args
-
         self.assertEqual(ok, False)
 
         x = simplified_to['x']
         self.assertInRange(x, 10, 20)
+        assert_simpler(kwargs, simplified_to)
 
     def test_shrink_int_v2(self):
 
@@ -59,10 +74,7 @@ class TestGen(unittest.TestCase):
         args = verify(sample_experiment, simplification=True)
         ok, kwargs, shrunked, simplified_to = args
 
-        self.assertEqual(ok, False)
-
-        x = simplified_to['x']
-        self.assertInRange(x, 0, 100)
+        assert_simpler(kwargs, simplified_to)
 
     def test_shrink_list(self):
         """
@@ -71,8 +83,7 @@ class TestGen(unittest.TestCase):
 
         @self.qc.forall('Sample property that generally invalid')
         def prop(x: list_of(positive_num, 10)):
-            print(x)
-            return len(x) <= 4
+            return len(x) == 4
 
         experiments = list(self.qc.experiments.values())
 
@@ -87,6 +98,7 @@ class TestGen(unittest.TestCase):
 
         x = simplified_to['x']
         self.assertLenUpTo(x, 5)
+        assert_simpler(kwargs, simplified_to)
 
     def test_shrink_list_middle(self):
         """
@@ -141,7 +153,8 @@ class TestGen(unittest.TestCase):
         ok, kwargs, shrunked, simplified_to = args
         self.assertEqual(ok, False)
         self.assertEqual(shrunked, True)
-        self.assertEqual(len(simplified_to['x']), 2, simplified_to)
+        self.assertEqual(simplified_to, {'x': {}})
+        assert_simpler(kwargs, simplified_to)
 
     def test_shrink_object(self):
         """
@@ -156,7 +169,7 @@ class TestGen(unittest.TestCase):
 
         @self.qc.forall('Sample property that generally invalid')
         def prop(u: user):
-            return len(u['mail']) < 5
+            return len(u['mail']) < 20
 
         experiments = list(self.qc.experiments.values())
 
@@ -167,8 +180,7 @@ class TestGen(unittest.TestCase):
         args = verify(sample_experiment, simplification=True)
         ok, kwargs, shrunked, simplified_to = args
 
-        self.assertEqual(ok, False)
-        self.assertEqual(shrunked, True)
+        assert_simpler(kwargs, simplified_to)
 
 
 if __name__ == '__main__':
