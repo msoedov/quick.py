@@ -1,5 +1,6 @@
 # quick.py
 
+[![Build Status](https://travis-ci.org/msoedov/quick.py.svg)](https://travis-ci.org/msoedov/quick.py)
 [![PyPI](https://img.shields.io/pypi/v/quick.py.svg)]()
 [![Supported versions](https://img.shields.io/pypi/pyversions/quick.py.svg)]()
 [![Code Issues](https://www.quantifiedcode.com/api/v1/project/aebad3c2b8dc400e9cd72730a4f8de21/badge.svg)](https://www.quantifiedcode.com/app/project/aebad3c2b8dc400e9cd72730a4f8de21)
