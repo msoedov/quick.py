@@ -130,7 +130,7 @@ def prop(user: user_gen):
 Shrinking
 ---------
 
-TBD
+TBD, It's a trial implementation, and has limited functionalities yet.
 
 
 
