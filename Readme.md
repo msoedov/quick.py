@@ -122,7 +122,7 @@ def user_gen(name: str, a: A):
     return User(name, age)
 
 
-forall('Valid users')
+@forall('Valid users')
 def prop(user: user_gen):
     return ...
 ```
