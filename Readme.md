@@ -25,7 +25,7 @@ from quick.features import QuickCheck
 qc = QuickCheck(max_count=100)
 
 
-@qc.forall('Associative of addition for integers')
+@qc.forall('Associative property of addition for integers')
 def prop(x: int, y: int):
     return (x + y) == (y + x)
 
@@ -64,7 +64,7 @@ def non_empty_list(el: number, ls: [number]):
     return ls
 
 
-@qc.forall('Sorted lists first element should be always lesser or eq than last')
+@qc.forall('The first element of a sorted list should be always lesser or eq than the last')
 def prop(x: non_empty_list):
     sorted_x = sorted(x)
     first = sorted_x[0]
