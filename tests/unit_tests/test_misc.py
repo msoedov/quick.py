@@ -19,5 +19,6 @@ class TestValues(unittest.TestCase):
             self.assertIn(c, 'abc')
         self.assertLessEqual(len(generated_value), 3)
 
+
 if __name__ == '__main__':
     unittest.main()

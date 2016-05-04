@@ -4,8 +4,10 @@ from quick.generators import positive_num, A
 
 
 def list_of(t: type, n):
+
     def seq(lst: [t]):
         return lst[:n]
+
     return seq
 
 

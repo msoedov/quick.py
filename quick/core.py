@@ -85,9 +85,8 @@ def flatten(node):
 def generate(annotated_property):
     """
     """
-    if not hasattr(
-            annotated_property,
-            '__annotations__') or not annotated_property.__annotations__:
+    if not hasattr(annotated_property,
+                   '__annotations__') or not annotated_property.__annotations__:
         raise AssertionError('{} no annotation?'.format(annotated_property))
     annotations = annotated_property.__annotations__
     call_with = Schema()

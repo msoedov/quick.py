@@ -36,8 +36,8 @@ def code_gen(experiment, x, skip_group, simplification=False):
         if not ok:
             description = '`{}` Input: #{}'.format(experiment.name, kwargs)
             if shrunked:
-                description = '{}\nSimplified to: {}'.format(
-                    description, simplified_to)
+                description = '{}\nSimplified to: {}'.format(description,
+                                                             simplified_to)
             else:
                 description = '{}\n Failed to simplify'.format(description)
             t.assertTrue(ok, description)
