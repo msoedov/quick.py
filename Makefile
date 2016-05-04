@@ -24,3 +24,7 @@ format:
 link-examples:
 	@rm -f examples
 	@ln -s  tests/fixtures examples
+
+
+req:
+	@pip install -r requirements_dev.txt
