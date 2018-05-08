@@ -1,7 +1,8 @@
 import unittest
-from quick.features import forall, QuickCheck
-from quick.generators import *
+
 from quick.arbitrary import A
+from quick.features import QuickCheck, forall
+from quick.generators import *
 
 qc = QuickCheck()
 

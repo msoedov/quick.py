@@ -1,5 +1,6 @@
 import unittest
-from quick import Value, Values, A
+
+from quick import A, Value, Values
 
 
 def abc_generator(a: A):

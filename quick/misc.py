@@ -1,7 +1,8 @@
-from .core import generate, flatten
-
-
 from typing import Callable, List
+
+from .core import flatten, generate
+
+
 def Value(gen_function: Callable) -> List[str]:
     """
     Helper function to generate value from annotted generator without

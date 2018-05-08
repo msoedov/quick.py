@@ -1,4 +1,5 @@
 import unittest
+
 from quick.features import QuickCheck
 
 

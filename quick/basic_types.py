@@ -1,8 +1,9 @@
-import sys
 import random
+import sys
+from typing import Any, Optional, Union
+
 from .common import *
 
-from typing import Any, Optional, Union
 max_num = sys.maxsize
 max_num = 1000
 generation_width = 20

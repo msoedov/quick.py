@@ -1,6 +1,7 @@
 import unittest
+
 from quick.features import QuickCheck, verify
-from quick.generators import positive_num, A
+from quick.generators import A, positive_num
 
 
 def list_of(t: type, n):

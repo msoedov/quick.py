@@ -1,10 +1,12 @@
 import itertools
 from copy import deepcopy
-from .core import flatten, GenValue
-from .common import *
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 from quick.core import GenValue, Schema
-from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
+
+from .common import *
+from .core import GenValue, flatten
+
 strategies_per_type = {}
 
 max_attempts = 1000

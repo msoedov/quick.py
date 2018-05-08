@@ -1,6 +1,6 @@
+from quick.arbitrary import A
 from quick.features import QuickCheck
 from quick.generators import number
-from quick.arbitrary import A
 
 qc = QuickCheck(max_count=100)
 

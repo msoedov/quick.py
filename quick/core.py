@@ -2,13 +2,13 @@
 Quick check testing library for python
 """
 import types
-from .basic_types import generation_width, default
+from collections import namedtuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
+
 from .arbitrary import A
+from .basic_types import default, generation_width
 from .common import *
 
-from collections import namedtuple
-
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
 nil = None
 numeric_types = [int, float]
 seq_types = [str, bytes]

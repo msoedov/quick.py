@@ -1,4 +1,4 @@
-from .arbitrary import Arbitrary, A
+from .arbitrary import A, Arbitrary
 
 
 def maybe_bool(a: Arbitrary):

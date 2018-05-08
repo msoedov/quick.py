@@ -1,6 +1,7 @@
 import random
-from .common import *
+
 from .basic_types import default
+from .common import *
 
 
 class Arbitrary(object):

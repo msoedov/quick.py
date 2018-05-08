@@ -1,14 +1,14 @@
+import functools
 import sys
 import unittest
-import functools
-from copy import deepcopy
 from collections import namedtuple
-from .core import generate, flatten, Schema
-from .shrink import shrink
-from .common import *
-
-
+from copy import deepcopy
 from typing import Any, Callable, List
+
+from .common import *
+from .core import Schema, flatten, generate
+from .shrink import shrink
+
 config = {'max_count': 100, 'max_scale': sys.maxsize}
 experiment = namedtuple('experiment', 'name fn config')
 

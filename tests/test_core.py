@@ -1,5 +1,6 @@
 from unittest import TestCase, skip
-from quick.core import generate, A
+
+from quick.core import A, generate
 
 
 @skip('changed api')
