@@ -1,13 +1,16 @@
 import itertools
 from copy import deepcopy
 from .core import flatten, GenValue
+from .common import *
 
+from quick.core import GenValue, Schema
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 strategies_per_type = {}
 
 max_attempts = 1000
 
 
-def shrink(validator, schema):
+def shrink(validator: Callable, schema: Schema) -> Union[Tuple[bool, Dict[str, int]], Tuple[bool, Dict[str, List[Any]]], Tuple[bool, Dict[str, Dict[Any, Any]]], Tuple[bool, Dict[str, List[Union[NoneType, int]]]], Tuple[bool, Dict[str, Dict[str, Union[int, str]]]]]:
     """
     :param: schema Schema{'a': GenValue(lambda x: x+1,
                          {'x':
@@ -38,7 +41,7 @@ def shrink(validator, schema):
     return False, flatten(schema)
 
 
-def reduce(t_var):
+def reduce(t_var: Any) -> Callable:
 
     def wrap(fn):
         strategies_per_type[t_var] = fn
@@ -47,7 +50,7 @@ def reduce(t_var):
     return wrap
 
 
-def variations(value):
+def variations(value: Any) -> str:
     strategy = strategies_per_type.get(type(value))
     if strategy is None:
         return [value]
@@ -56,21 +59,21 @@ def variations(value):
 
 class llist(object):
 
-    def __init__(self, seq):
+    def __init__(self, seq: str) -> None:
         self.lst = list(seq)
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int) -> Union[List[NoneType], int, List[GenValue]]:
         try:
             return self.lst[index]
         except LookupError:
             return self.lst[-1]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.lst)
 
 
 @reduce(GenValue)
-def gen_simpl(val):
+def gen_simpl(val: GenValue) -> None:
     """
     GenValue(gen=lambda x, y: x, kwargs={'y': [None], 'x': [None, None, None]})
     """
@@ -90,7 +93,7 @@ def gen_simpl(val):
 
 
 @reduce(list)
-def all_list_for(val):
+def all_list_for(val: Union[List[NoneType], List[GenValue]]) -> Iterator[Union[List[NoneType], List[GenValue]]]:
 
     length = len(val)
     yield []
@@ -109,13 +112,13 @@ def all_dicts_for(val):
 
 
 @reduce(int)
-def all_ints_for(val):
+def all_ints_for(val: int) -> Iterator[int]:
     for num in range(0, abs(val)):
         yield num
 
 
 @reduce(str)
-def all_str_for(val):
+def all_str_for(val: str) -> str:
     chars = val.split()
     sub_strs = all_list_for(chars)
     for sub_str in sub_strs:

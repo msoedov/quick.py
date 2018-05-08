@@ -28,3 +28,6 @@ link-examples:
 
 req:
 	@pip install -r requirements_dev.txt
+
+ts:
+	@monkeytype run -m nose

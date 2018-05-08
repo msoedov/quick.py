@@ -1,16 +1,18 @@
 import sys
 import random
+from .common import *
 
+from typing import Any, Optional, Union
 max_num = sys.maxsize
 max_num = 1000
 generation_width = 20
 
 
-def default(type,
-            lo=-max_num,
-            hi=max_num,
-            complex_size=generation_width,
-            min_complexity=0):
+def default(type: Any,
+            lo: int = -max_num,
+            hi: int = max_num,
+            complex_size: int = generation_width,
+            min_complexity: int = 0) -> Optional[Union[bytes, int, float, str]]:
     if type == float:
         return random.uniform(lo, hi)
     elif type == int:

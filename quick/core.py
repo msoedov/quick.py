@@ -4,8 +4,11 @@ Quick check testing library for python
 import types
 from .basic_types import generation_width, default
 from .arbitrary import A
+from .common import *
+
 from collections import namedtuple
 
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
 nil = None
 numeric_types = [int, float]
 seq_types = [str, bytes]
@@ -19,7 +22,7 @@ source = A()
 
 class GenValue(namedtuple('GenValue', 'gen, kwargs')):
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         To make GenValue(lambda: None, {}) hashable
         """
@@ -35,7 +38,7 @@ class Schema(dict):
         return 'Schema{}'.format(dict(self))
 
 
-def reflect(val):
+def reflect(val: Union[Callable, Type[bool]]) -> Optional[GenValue]:
     if isinstance(val, types.FunctionType):
         fn, kw = generate(val)
         return GenValue(fn, kw)
@@ -44,7 +47,7 @@ def reflect(val):
     return default(val)
 
 
-def type_switch(t_var):
+def type_switch(t_var: Union[List[Type[bool]], List[Callable], Dict[Callable, Callable]]) -> Union[Dict[GenValue, GenValue], List[GenValue], List[NoneType]]:
     if isinstance(t_var, list):
         nested_type = t_var[0]
         width = source.choose(0, generation_width)
@@ -63,7 +66,7 @@ def type_switch(t_var):
         raise NotImplementedError
 
 
-def flatten(node):
+def flatten(node: Any) -> Any:
     """
     >>> flatten({'a': GenValue(lambda x: x+1, {'x': 1})})
     {'a': 2}
@@ -82,7 +85,7 @@ def flatten(node):
     return node
 
 
-def generate(annotated_property):
+def generate(annotated_property: Callable) -> Tuple[Callable, Schema]:
     """
     """
     if not hasattr(annotated_property,

@@ -1,7 +1,7 @@
-from .arbitrary import A
+from .arbitrary import Arbitrary, A
 
 
-def maybe_bool(a: A):
+def maybe_bool(a: Arbitrary):
     """
     >>> maybe_bool(A()) in [None, True, False]
     True
@@ -9,15 +9,15 @@ def maybe_bool(a: A):
     return maybe(bool)(a)
 
 
-def maybe(t):
+def maybe(kind):
 
-    def gn(a: A):
-        return a.one_of(None, a.default(t))
+    def gn(a: Arbitrary):
+        return a.one_of(None, a.default(kind))
 
     return gn
 
 
-def number(a: A):
+def number(a: Arbitrary):
     kind = a.one_of(int, float)
     num = a.default(kind)
     return num

@@ -1,7 +1,8 @@
 from .core import generate, flatten
 
 
-def Value(gen_function):
+from typing import Callable, List
+def Value(gen_function: Callable) -> List[str]:
     """
     Helper function to generate value from annotted generator without
     using QC.

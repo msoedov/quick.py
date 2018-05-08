@@ -5,7 +5,10 @@ from copy import deepcopy
 from collections import namedtuple
 from .core import generate, flatten, Schema
 from .shrink import shrink
+from .common import *
 
+
+from typing import Any, Callable, List
 config = {'max_count': 100, 'max_scale': sys.maxsize}
 experiment = namedtuple('experiment', 'name fn config')
 
@@ -14,7 +17,7 @@ default = object()
 debug = print
 
 
-def verify(prop: experiment, simplification=False):
+def verify(prop: experiment, simplification: bool = False) -> Any:
     test_case, schema = generate(prop.fn)
     kwargs = flatten(schema)
     ok = test_case(**kwargs)
@@ -28,11 +31,12 @@ def verify(prop: experiment, simplification=False):
     return False, kwargs, shrunked, simplified_to
 
 
-def code_gen(experiment, x, skip_group, simplification=False):
+def code_gen(experiment: experiment, x: int, skip_group: Callable, simplification: bool = False) -> Callable:
 
     @skip_group
     def test_experiment(t):
-        ok, kwargs, shrunked, simplified_to = verify(experiment, simplification)
+        ok, kwargs, shrunked, simplified_to = verify(
+            experiment, simplification)
         if not ok:
             description = '`{}` Input: #{}'.format(experiment.name, kwargs)
             if shrunked:
@@ -48,12 +52,12 @@ def code_gen(experiment, x, skip_group, simplification=False):
 
 class QuickCheck(object):
 
-    def __init__(self, **settings):
+    def __init__(self, **settings) -> None:
         super(QuickCheck, self).__init__()
         self.settings = settings or config
         self.experiments = {}
 
-    def __call__(self, experiment_name, **defaults):
+    def __call__(self, experiment_name: str, **defaults) -> Callable:
 
         def decorator(fn):
             config = default
@@ -130,7 +134,7 @@ class QuickCheck(object):
         TestProperties.properties = properties
         return TestProperties
 
-    def verify(self):
+    def verify(self) -> List[NoneType]:
         test_cls = self.as_testcase()
         test = test_cls()
         return [prop(test) for prop in test.properties]
