@@ -13,8 +13,10 @@ class Arbitrary(object):
         if not empty:
             if iter_len == 1:
                 return iterable
+
             elif iter_len == 0:
-                raise ValueError('Iterable can not be empty')
+                raise ValueError("Iterable can not be empty")
+
         take_n = random.randint(start_from, iter_len)
         if not empty and take_n == start_from:
             take_n += 1
@@ -29,7 +31,8 @@ class Arbitrary(object):
         """
         width = len(options)
         if width == 0:
-            raise ValueError('Not enought options')
+            raise ValueError("Not enought options")
+
         index = random.randint(0, width - 1)
         return options[index]
 

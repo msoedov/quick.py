@@ -12,7 +12,15 @@ strategies_per_type = {}
 max_attempts = 1000
 
 
-def shrink(validator: Callable, schema: Schema) -> Union[Tuple[bool, Dict[str, int]], Tuple[bool, Dict[str, List[Any]]], Tuple[bool, Dict[str, Dict[Any, Any]]], Tuple[bool, Dict[str, List[Union[NoneType, int]]]], Tuple[bool, Dict[str, Dict[str, Union[int, str]]]]]:
+def shrink(
+    validator: Callable, schema: Schema
+) -> Union[
+    Tuple[bool, Dict[str, int]],
+    Tuple[bool, Dict[str, List[Any]]],
+    Tuple[bool, Dict[str, Dict[Any, Any]]],
+    Tuple[bool, Dict[str, List[Union[NoneType, int]]]],
+    Tuple[bool, Dict[str, Dict[str, Union[int, str]]]],
+]:
     """
     :param: schema Schema{'a': GenValue(lambda x: x+1,
                          {'x':
@@ -34,12 +42,15 @@ def shrink(validator: Callable, schema: Schema) -> Union[Tuple[bool, Dict[str, i
             if not ok:
                 if last_fail is not None:
                     break
+
                 last_fail = sc
             attemps += 1
         else:
             if last_fail is None:
                 return False, flatten(schema)
+
         return True, flatten(last_fail)
+
     return False, flatten(schema)
 
 
@@ -56,6 +67,7 @@ def variations(value: Any) -> str:
     strategy = strategies_per_type.get(type(value))
     if strategy is None:
         return [value]
+
     return strategy(value)
 
 
@@ -67,6 +79,7 @@ class llist(object):
     def __getitem__(self, index: int) -> Union[List[NoneType], int, List[GenValue]]:
         try:
             return self.lst[index]
+
         except LookupError:
             return self.lst[-1]
 
@@ -95,10 +108,13 @@ def gen_simpl(val: GenValue) -> None:
 
 
 @reduce(list)
-def all_list_for(val: Union[List[NoneType], List[GenValue]]) -> Iterator[Union[List[NoneType], List[GenValue]]]:
+def all_list_for(
+    val: Union[List[NoneType], List[GenValue]]
+) -> Iterator[Union[List[NoneType], List[GenValue]]]:
 
     length = len(val)
     yield []
+
     for size in range(1, length + 1):
         for start in range(0, (length - size) + 1):
             yield val[start:start + size]
@@ -124,7 +140,7 @@ def all_str_for(val: str) -> str:
     chars = val.split()
     sub_strs = all_list_for(chars)
     for sub_str in sub_strs:
-        return ''.join(sub_str)
+        return "".join(sub_str)
 
 
 @reduce(bool)

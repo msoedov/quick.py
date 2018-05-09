@@ -7,7 +7,7 @@ from quick.generators import *
 qc = QuickCheck()
 
 
-@qc.forall('Maybe generator')
+@qc.forall("Maybe generator")
 def prop(x: maybe(None)):
     return x is None
 

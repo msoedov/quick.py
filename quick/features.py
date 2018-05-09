@@ -9,8 +9,8 @@ from .common import *
 from .core import Schema, flatten, generate
 from .shrink import shrink
 
-config = {'max_count': 100, 'max_scale': sys.maxsize}
-experiment = namedtuple('experiment', 'name fn config')
+config = {"max_count": 100, "max_scale": sys.maxsize}
+experiment = namedtuple("experiment", "name fn config")
 
 default = object()
 
@@ -23,6 +23,7 @@ def verify(prop: experiment, simplification: bool = False) -> Any:
     ok = test_case(**kwargs)
     if ok:
         return True, kwargs, None, None
+
     if simplification:
         shrunked, simplified_to = shrink(test_case, schema)
     else:
@@ -31,19 +32,19 @@ def verify(prop: experiment, simplification: bool = False) -> Any:
     return False, kwargs, shrunked, simplified_to
 
 
-def code_gen(experiment: experiment, x: int, skip_group: Callable, simplification: bool = False) -> Callable:
+def code_gen(
+    experiment: experiment, x: int, skip_group: Callable, simplification: bool = False
+) -> Callable:
 
     @skip_group
     def test_experiment(t):
-        ok, kwargs, shrunked, simplified_to = verify(
-            experiment, simplification)
+        ok, kwargs, shrunked, simplified_to = verify(experiment, simplification)
         if not ok:
-            description = '`{}` Input: #{}'.format(experiment.name, kwargs)
+            description = "`{}` Input: #{}".format(experiment.name, kwargs)
             if shrunked:
-                description = '{}\nSimplified to: {}'.format(description,
-                                                             simplified_to)
+                description = "{}\nSimplified to: {}".format(description, simplified_to)
             else:
-                description = '{}\n Failed to simplify'.format(description)
+                description = "{}\n Failed to simplify".format(description)
             t.assertTrue(ok, description)
 
     test_experiment.__doc__ = experiment.name
@@ -64,25 +65,23 @@ class QuickCheck(object):
             if defaults:
                 config = deepcopy(self.settings)
                 config.update(defaults)
-            debug('Register {} to {}'.format(experiment_name, fn))
-            self.experiments[experiment_name] = experiment(experiment_name, fn,
-                                                           config)
+            debug("Register {} to {}".format(experiment_name, fn))
+            self.experiments[experiment_name] = experiment(experiment_name, fn, config)
             return fn
 
         return decorator
 
     forall = __call__
 
-    def as_testcase(self,
-                    prototype=unittest.TestCase,
-                    skip_on_failure=True,
-                    simplification=True):
+    def as_testcase(
+        self, prototype=unittest.TestCase, skip_on_failure=True, simplification=True
+    ):
         """
         :param prototype: class of test case
         :param skip_on_failure: boolean flag to skip all test group on first failure
         :return: test case class
         """
-        debug('_' * 50)
+        debug("_" * 50)
 
         class TestProperties(prototype):
             """
@@ -104,9 +103,11 @@ class QuickCheck(object):
                 def inner(*args, **kwargs):
                     nonlocal skip
                     if skip and skip_on_failure:
-                        raise unittest.SkipTest('Failed experiment')
+                        raise unittest.SkipTest("Failed experiment")
+
                     try:
                         return fn(*args, **kwargs)
+
                     except Exception as e:
                         skip = True
                         raise e
@@ -120,16 +121,15 @@ class QuickCheck(object):
         for experiment in self.experiments.values():
             if experiment.config is not default:
                 settings = experiment.config
-            max_count = settings['max_count']
+            max_count = settings["max_count"]
 
             skip_group = skip_if()
-            debug('Generating {} tests for [{}]'.format(max_count,
-                                                        experiment.name))
+            debug("Generating {} tests for [{}]".format(max_count, experiment.name))
             for x in range(max_count):
-                test_experiment = code_gen(experiment, x, skip_group,
-                                           simplification)
-                setattr(TestProperties, '{}#{}'.format(experiment.name, x),
-                        test_experiment)
+                test_experiment = code_gen(experiment, x, skip_group, simplification)
+                setattr(
+                    TestProperties, "{}#{}".format(experiment.name, x), test_experiment
+                )
                 properties.append(test_experiment)
         TestProperties.properties = properties
         return TestProperties

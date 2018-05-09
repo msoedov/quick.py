@@ -4,7 +4,7 @@ from quick import A, Value, Values
 
 
 def abc_generator(a: A):
-    return a.some_of(['a', 'b', 'c'], empty=False)
+    return a.some_of(["a", "b", "c"], empty=False)
 
 
 def generator(x: int):
@@ -17,9 +17,9 @@ class TestValues(unittest.TestCase):
         generated_value = Value(abc_generator)
         self.assertNotEqual(generated_value, [])
         for c in generated_value:
-            self.assertIn(c, 'abc')
+            self.assertIn(c, "abc")
         self.assertLessEqual(len(generated_value), 3)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

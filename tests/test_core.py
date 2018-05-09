@@ -3,7 +3,7 @@ from unittest import TestCase, skip
 from quick.core import A, generate
 
 
-@skip('changed api')
+@skip("changed api")
 class TestGenerate(TestCase):
 
     def test_generate_map(self):
@@ -12,7 +12,7 @@ class TestGenerate(TestCase):
             return x
 
         fn, kw = generate(foo)
-        self.assertIsInstance(kw['x'], dict)
+        self.assertIsInstance(kw["x"], dict)
         self.assertIs(fn, foo)
 
     def test_generate_map_complex(self):
@@ -21,7 +21,7 @@ class TestGenerate(TestCase):
             return x
 
         fn, kw = generate(foo)
-        self.assertIsInstance(kw['x'], dict)
+        self.assertIsInstance(kw["x"], dict)
         self.assertIs(fn, foo)
 
     def test_generate_map_nested_gen(self):
@@ -33,9 +33,9 @@ class TestGenerate(TestCase):
             return x
 
         fn, kw = generate(foo)
-        self.assertIsInstance(kw['x'], dict)
+        self.assertIsInstance(kw["x"], dict)
         self.assertIs(fn, foo)
-        self.assertIsInstance(kw['x'], str, kw)
+        self.assertIsInstance(kw["x"], str, kw)
 
     def test_generate_set(self):
 
@@ -43,7 +43,7 @@ class TestGenerate(TestCase):
             return x
 
         fn, kw = generate(foo)
-        self.assertIsInstance(kw['x'], set)
+        self.assertIsInstance(kw["x"], set)
         self.assertIs(fn, foo)
 
     def test_generate_tuple(self):
@@ -52,13 +52,14 @@ class TestGenerate(TestCase):
             return x
 
         fn, kw = generate(foo)
-        self.assertIsInstance(kw['x'], tuple)
+        self.assertIsInstance(kw["x"], tuple)
         self.assertIs(fn, foo)
 
     def test_unknown(self):
-        unknown = type('Unknown', (object,), {})
+        unknown = type("Unknown", (object,), {})
 
         def foo(x: unknown):
             return x
+
         with self.assertRaises(TypeError):
             generate(foo)

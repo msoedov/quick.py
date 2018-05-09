@@ -8,6 +8,7 @@ def property_basic(x: int):
 def even_numbers(x: int):
     if x % 2:
         return x
+
     return x + 1
 
 
@@ -45,4 +46,4 @@ def json_params(a: A):
 
 
 def email(a: A):
-    return '{}@{}.{}'.format(word(a), word(a), a.one_of('com', 'net'))
+    return "{}@{}.{}".format(word(a), word(a), a.one_of("com", "net"))

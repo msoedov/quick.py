@@ -15,16 +15,20 @@ def list_of(t: type, n):
 def assert_simpler(before, after):
     if before == after:
         return
+
     if not after:
         return
+
     for k, v in before.items():
         if k not in after:
             continue
+
         if isinstance(v, dict):
             assert_simpler(v, after[k])
             continue
+
         if v < after[k]:
-            raise AssertionError('{} < {}'.format(before, after))
+            raise AssertionError("{} < {}".format(before, after))
 
 
 class TestGen(unittest.TestCase):
@@ -44,7 +48,7 @@ class TestGen(unittest.TestCase):
         It should shrink value from 10 to 20
         """
 
-        @self.qc.forall('Sample property that generally invalid')
+        @self.qc.forall("Sample property that generally invalid")
         def prop(x: positive_num):
             return x < 10
 
@@ -58,13 +62,13 @@ class TestGen(unittest.TestCase):
         ok, kwargs, shrunked, simplified_to = args
         self.assertEqual(ok, False)
 
-        x = simplified_to['x']
+        x = simplified_to["x"]
         self.assertInRange(x, 10, 20)
         assert_simpler(kwargs, simplified_to)
 
     def test_shrink_int_v2(self):
 
-        @self.qc.forall('Sample property that generally invalid')
+        @self.qc.forall("Sample property that generally invalid")
         def prop(x: positive_num):
             return 50 < x < 200
 
@@ -84,7 +88,7 @@ class TestGen(unittest.TestCase):
         It should shrink list
         """
 
-        @self.qc.forall('Sample property that generally invalid')
+        @self.qc.forall("Sample property that generally invalid")
         def prop(x: list_of(positive_num, 10)):
             return len(x) == 4
 
@@ -99,7 +103,7 @@ class TestGen(unittest.TestCase):
 
         self.assertEqual(ok, False)
 
-        x = simplified_to['x']
+        x = simplified_to["x"]
         self.assertLenUpTo(x, 5)
         assert_simpler(kwargs, simplified_to)
 
@@ -111,7 +115,7 @@ class TestGen(unittest.TestCase):
         def bit_seq(x: [bool], y: [bool]):
             return x + [1, 1, 1] + y
 
-        @self.qc.forall('Sample property that generally invalid')
+        @self.qc.forall("Sample property that generally invalid")
         def prop(x: bit_seq):
             return len(x) > 2 and all(map(lambda a: a == 1, x))
 
@@ -126,7 +130,7 @@ class TestGen(unittest.TestCase):
         self.assertEqual(ok, False)
         self.assertEqual(shrunked, True)
 
-        x = simplified_to['x']
+        x = simplified_to["x"]
         self.assertLenUpTo(x, 5)
         self.assertIn(1, x)
 
@@ -141,9 +145,9 @@ class TestGen(unittest.TestCase):
         def key_str(x: default(str)):
             return x[:5]
 
-        @self.qc.forall('Sample property that generally invalid')
+        @self.qc.forall("Sample property that generally invalid")
         def prop(x: {key_str: positive_num}):
-            x['a'] = 1
+            x["a"] = 1
             return len(x) == 2
 
         experiments = list(self.qc.experiments.values())
@@ -156,7 +160,7 @@ class TestGen(unittest.TestCase):
         ok, kwargs, shrunked, simplified_to = args
         self.assertEqual(ok, False)
         self.assertEqual(shrunked, True)
-        self.assertEqual(simplified_to, {'x': {}})
+        self.assertEqual(simplified_to, {"x": {}})
         assert_simpler(kwargs, simplified_to)
 
     def test_shrink_object(self):
@@ -165,14 +169,14 @@ class TestGen(unittest.TestCase):
         """
 
         def email(name: str, host: str, domain: str):
-            return '{}@{}.{}'.format(name, host, domain)
+            return "{}@{}.{}".format(name, host, domain)
 
         def user(username: str, mail: email):
             return dict(id=1, username=username[:7], mail=mail)
 
-        @self.qc.forall('Sample property that generally invalid')
+        @self.qc.forall("Sample property that generally invalid")
         def prop(u: user):
-            return len(u['mail']) < 20
+            return len(u["mail"]) < 20
 
         experiments = list(self.qc.experiments.values())
 
@@ -186,5 +190,5 @@ class TestGen(unittest.TestCase):
         assert_simpler(kwargs, simplified_to)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
