@@ -9,5 +9,5 @@ pathtools==0.1.2
 python-termstyle==0.1.10
 rednose==1.1.1
 watchdog==0.8.3
-wheel==0.26.0
+wheel==0.38.1
 yapf==0.7.1
